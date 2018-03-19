@@ -11,7 +11,7 @@
             <header class="top-bar">
                 <div class="page-selector">
                     <select v-model="currentPage">
-                        <option v-for="page in templates" :value="page.template">{{page.name}}</option>
+                      <option v-for="(page,index) in templates" :value="page.template" :key="index">{{page.name}}</option>
                     </select>
                 </div>
                 <div class="view-ports">
@@ -28,10 +28,7 @@
             <div class="preview" id="preview">
                 <!--<link v-for="style in sectionStyles" rel="stylesheet" media="all" :href="websiteServer + 'static/assets/' + style" crossorigin="anonymous" />-->
                 <div class="iframe-wrapper" :class="viewPort" id="preview-wrapper">
-                    <iframe ref="iframe" :src="iframeUrl" @load="iframeLoaded"></iframe>
-                    <!--<div id="preview-container">
-                    </div>-->
-                    <!--<site-preview :sections="pageSections" ref="sitePreview"></site-preview>-->
+                    <site-preview :sections="pageSections" ref="sitePreview"></site-preview>
                 </div>
             </div>
         </div>
@@ -59,18 +56,21 @@ export default {
       allSections: [],
       // 是否有section-list 组件
       hasSectionList: false,
-      reusableSections: [],       //可以在section-list组件中动态添加的section
-      commonSections: [],          //页面固定部分的组件 例如 菜单、头部、左侧栏 这些组件特点就是所有页面表现一致，不能动态增删
-      //commonSectionsData: {},     //通用部分的数据
-      currentSection: {},          //正在设置属性的当前section
+      reusableSections: [],
+      // 可以在section-list组件中动态添加的section
+      commonSections: [],
+      // 页面固定部分的组件 例如 菜单、头部、左侧栏 这些组件特点就是所有页面表现一致，不能动态增删
+      currentSection: {},
+      // 正在设置属性的当前section
       pageSections: [],
       viewPort: 'desktop',
       pageConfig: {},
       globalData: {},
-      sectionStyles: [], //需要引入的样式
+      // 需要引入的样式
+      sectionStyles: [],
       iframeUrl: null,
       iframeVue: null,
-    };
+    }
   },
 
   components: {
@@ -81,7 +81,7 @@ export default {
 
   watch: {
     currentPage: async function (value) {
-      await this.loadPage(value);
+      await this.loadPage(value)
     }
   },
 
@@ -94,43 +94,43 @@ export default {
 
   methods: {
     async loadTemplates() {
-      const response = await this.ctx.models.website.getAllTemplates();
-      this.templates = response.templates;
+      const response = await this.ctx.models.website.getAllTemplates()
+      this.templates = response.templates
     },
 
     /**
      * 加载所有section
      **/
     async loadSections() {
-      const response = await this.ctx.models.website.getAllSections();
+      const response = await this.ctx.models.website.getAllSections()
 
-      const allSections = response.settings;
-      this.allSections = allSections;
+      const allSections = response.settings
+      this.allSections = allSections
 
       for (let i = 0; i < allSections.length; i++) {
         if (!allSections[i].isCommon) {
-          this.reusableSections.push(allSections[i]);
+          this.reusableSections.push(allSections[i])
         } else {
-          //对于单例的section， 默认data是保存其内的，
-          //this.commonSectionsData[camelize(allSections[i].component)] = allSections[i].data;
+          // 对于单例的section， 默认data是保存其内的，
+          // this.commonSectionsData[camelize(allSections[i].component)] = allSections[i].data;
         }
       }
-      //this.reusableSections = response.settings;
+      // this.reusableSections = response.settings;
 
       for (const section of allSections) {
         section.template = this.ctx.models.website.loadSectionTemplate({
           section: section.path
-        });
+        })
         if (section.style) {
-          this.sectionStyles.push(section.style);
+          this.sectionStyles.push(section.style)
         }
       }
 
       for (const section of allSections) {
-        section.template = await section.template;
+        section.template = await section.template
         let dataFunction = function () {
-          return this.$root.pageData;
-        };
+          return this.$root.pageData
+        }
 
         Vue.component(section.component, {
           props: {
@@ -140,75 +140,77 @@ export default {
           },
           data: dataFunction,
           template: section.template
-        });
+        })
       }
     },
 
     async loadPage(page) {
       for (let config of this.templates) {
         if (config.template === page) {
-          this.pageConfig = config;
-          break;
+          this.pageConfig = config
+          break
         }
       }
-      const jsonConfig = this.pageConfig;
+      const jsonConfig = this.pageConfig
 
-      //加载页面配置文件 例如 index
-      //const jsonConfig = await this.ctx.models.website.loadStaticFile('/templates/' + page + '.json');
-      //this.pageConfig = jsonConfig;
+      // 加载页面配置文件 例如 index
+      // const jsonConfig = await this.ctx.models.website.loadStaticFile('/templates/' + page + '.json');
+      // this.pageConfig = jsonConfig;
 
-      //获取页面模板
-      const contentTemplate = await this.ctx.models.website.loadStaticFile('/templates/' + jsonConfig.path);
+      // 获取页面模板
+      const contentTemplate = await this.ctx.models.website.loadStaticFile('/templates/' + jsonConfig.path)
 
-      //获取页面使用的layout
-      const layoutTemplate = await this.ctx.models.website.loadStaticFile('/layout/' + jsonConfig.layout + '.html');
-      const layoutConfig = await this.ctx.models.website.loadStaticFile('/layout/' + jsonConfig.layout + '.json');
+      // 获取页面使用的layout
+      const layoutTemplate = await this.ctx.models.website.loadStaticFile('/layout/' + jsonConfig.layout + '.html')
+      const layoutConfig = await this.ctx.models.website.loadStaticFile('/layout/' + jsonConfig.layout + '.json')
 
-      //设置页面的固定部分组件
-      this.commonSections.length = 0;
+      // 设置页面的固定部分组件
+      this.commonSections.length = 0
       if (layoutConfig.components) {
         for (let commonSection in layoutConfig.components) {
-          const def = this.getSectionDef(commonSection);
+          const def = this.getSectionDef(commonSection)
           // def.data = Object.assign(this.commonSectionsData[camelize(def.component)], layoutConfig.common[commonSection].data);
-          def.data = layoutConfig.components[commonSection].data;
-          this.commonSections.push(def);
+          def.data = layoutConfig.components[commonSection].data
+          this.commonSections.push(def)
         }
       }
 
-      //增加页面内部的固定组件
-      this.pageSections.length = 0;
-      this.hasSectionList = false;
+      // 增加页面内部的固定组件
+      this.pageSections.length = 0
+      this.hasSectionList = false
 
       for (const pageComponent in jsonConfig.components) {
-        if (pageComponent === 'section-list') { //表示页面有动态增加组件
-          this.hasSectionList = true;
+        if (pageComponent === 'section-list') {
+          // 表示页面有动态增加组件
+          this.hasSectionList = true
           for (const section of jsonConfig.components[pageComponent].sections) {
             for (const one of this.reusableSections) {
               if (one.component === section.component) {
-                //这里拷贝section定义过来， 以便于按类型定义配置字段
-                const addedSection = JSON.parse(JSON.stringify(one)); //深度拷贝
-                addedSection._id = 'section-' + this.sectionInc;
-                this.sectionInc++;
-                addedSection.data = section.data;
-                this.pageSections.push(addedSection);
-                break;
+                // 这里拷贝section定义过来， 以便于按类型定义配置字段
+                // 深度拷贝
+                const addedSection = JSON.parse(JSON.stringify(one))
+                addedSection._id = 'section-' + this.sectionInc
+                this.sectionInc++
+                addedSection.data = section.data
+                this.pageSections.push(addedSection)
+                break
               }
             }
           }
         } else {
-          //非动态组件， 直接获取定义
-          const def = this.getSectionDef(pageComponent);
+          // 非动态组件， 直接获取定义
+          const def = this.getSectionDef(pageComponent)
           // def.data = Object.assign(this.commonSectionsData[camelize(def.component)], jsonConfig.components[pageComponent]);
-          def._id = 'section-' + this.sectionInc;
-          this.sectionInc++;
-          def.data = jsonConfig.components[pageComponent].data;
-          this.commonSections.push(def);
+          def._id = 'section-' + this.sectionInc
+          this.sectionInc++
+          def.data = jsonConfig.components[pageComponent].data
+          this.commonSections.push(def)
         }
       }
 
-      //将配置好的动态列表数据回写
+      // 将配置好的动态列表数据回写
       if (jsonConfig.components['section-list']) {
-        jsonConfig.components['section-list'].sections = this.pageSections;
+        jsonConfig.components['section-list'].sections = this.pageSections
       }
 
       const pageData = await this.ctx.models.website.getPageData({
