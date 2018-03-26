@@ -1,6 +1,6 @@
 import BootStrap from 'vue-spa-boot'
 import App from './App'
-import module from '../src/module'
+import module from './module'
 
 const bootstrap = new BootStrap({
   rootApp: App,
@@ -9,7 +9,16 @@ const bootstrap = new BootStrap({
     website: {
       baseURL: 'http://localhost:3000'
     }
+  },
+  beforeStarted: function() {
+    // check login or something else
+    return true
+  },
+  started: function() {
+    debugger
   }
-});
+})
+
+debugger
 
 bootstrap.startUp()

@@ -6,9 +6,9 @@
 </template>
 
 <script>
-    export default {
-        name: "field-text"
-    }
+  export default {
+    name: "field-text"
+  }
 </script>
 
 <style scoped>

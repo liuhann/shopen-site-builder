@@ -37,7 +37,7 @@
 
 <script>
 import Vue from 'vue'
-import PageSections from './page-sections'
+import PageSections from './components/sections-shortview'
 import SectionTemplates from './section-templates'
 import SectionList from './section-list.vue'
 import SectionSetting from './section-setting'

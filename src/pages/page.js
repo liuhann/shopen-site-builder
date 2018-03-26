@@ -8,7 +8,7 @@
 
 // const PageUserList = async resolve => resolve(await import(/* webpackChunkName: "githuber" */'./page/userlist/page.vue'));
 // const UserDetail = async resolve => resolve(await import(/* webpackChunkName: "githuber" */'./page/hello/page.vue'));
-const SiteBuilder = () => import(/* webpackChunkName: "site-builder" */ './main/site-builder.vue')
+const SiteBuilder = () => import(/* webpackChunkName: "site-builder" */ './main/page-builder.vue')
 
 export {
   SiteBuilder
