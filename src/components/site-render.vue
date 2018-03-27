@@ -1,9 +1,10 @@
-<style scoped>
+<style lang="less" scoped>
 
 </style>
 
 <template>
 <div class="shopen-site">
+
 </div>
 </template>
 
