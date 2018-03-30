@@ -80,6 +80,37 @@
         }
       }
     }
+    main {
+      position: absolute;
+      left: 250px;
+      top:0;
+      right: 0px;
+      overflow: auto;
+      bottom: 0;
+      color: #5b6b73;
+      font-size: 12px;
+      z-index: 4;
+      transition: all .2s ease-in-out;
+      background: #FAFAFA;
+      .screen-viewport {
+        background: #fff;
+        margin: 20px 40px;
+        border: 1px solid #eee;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .outer-bar {
+          width: 100%;
+          height: 40px;
+          background: #000;
+        }
+        .screen-content {
+          width: 100%;
+          flex: 1;
+        }
+      }
+    }
   }
 }
 </style>
@@ -95,18 +126,22 @@
     <aside>
       <span>组件</span>
       <section class="section-list">
-        <ul>
+        <draggable element="ul" :options="dragSourceOpts">
           <li v-for="(section, key) in sections" :key="key">
             <div class="image-wrapper">
               <img :src="imageBaseUrl + '/themes/' + theme + '/previews/' + section.preview">
             </div>
             <span class="name">{{section.title}}</span>
           </li>
-        </ul>
+        </draggable>
       </section>
     </aside>
     <main>
-      <div class="screen-viewport" :style="viewPortStyle"></div>
+      <div class="screen-viewport" :style="viewPortStyle">
+        <div class="outer-bar"></div>
+        <draggable element="div" class="screen-content" v-model="pageSections" :options="dragMobileScreenOpts">
+        </draggable>
+      </div>
     </main>
   </div>
 </div>
@@ -114,8 +149,12 @@
 <script>
 import builder from '../../models/builder'
 import screens from '../../models/screens'
+import draggable from 'vuedraggable'
 export default {
   name: 'page-builder',
+  components: {
+    draggable
+  },
   created() {
     this.loadThemeSections(this.theme)
   },
@@ -125,6 +164,22 @@ export default {
       theme: 'bonfire',
       viewPort: '360x640',
       screens,
+      dragSourceOpts: {
+        sort: false,
+        group: {
+          name: 'sections',
+          pull: 'clone',
+          put: false,
+        }
+      },
+      dragMobileScreenOpts: {
+        sort: true,
+        group: {
+          name: 'sections',
+          put: true,
+          pull: false,
+        }
+      },
       sections: [],
       pageSections: [],
     }
