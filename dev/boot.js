@@ -7,6 +7,9 @@ async function boot() {
     servers: {
       website: {
         baseURL: 'http://localhost:3000'
+      },
+      theme: {
+        baseURL: 'http://localhost:3000'
       }
     },
     started: function(vm) {

@@ -1,5 +1,5 @@
 import {SiteBuilder} from './pages/page'
-import * as builderModel from './models/website'
+import * as builderModel from './models/builder'
 
 const routes = [{
   path: '/site/builder',
