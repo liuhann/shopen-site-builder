@@ -33,7 +33,7 @@
       color: #5b6b73;
       background: #fff;
       font-size: 12px;
-      width: 245px;
+      width: 248px;
       box-shadow: 0 2px 30px 0 hsla(0,0%,84%,.5);
       z-index: 4;
       overflow: hidden;
@@ -43,20 +43,39 @@
         flex-wrap: wrap;
         align-content: flex-start;
         list-style: none;
-        margin: 0 0 0 2px;
+        width: 250px;
+        margin: 0;
         padding: 0;
         li {
-          height: 100px;
+          height: 120px;
           border: 1px solid #eee;
           margin-top: -1px;
           margin-left: -1px;
           overflow: hidden;
-          width: 82px;
+          width: 124px;
           display: flex;
           flex-direction: column;
           justify-content: center;
           align-items: center;
           cursor: pointer;
+          &:hover {
+            background-color: #f7f7f7;
+          }
+          .image-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            img {
+              width: 100px;
+              max-height: 81px;
+            }
+          }
+          .name {
+            line-height: 30px;
+            height: 30px;
+            font-size: 14px;
+          }
         }
       }
     }
@@ -70,13 +89,16 @@
   </div>
   <div class="screen">
     <aside>
+
+      <span>组件</span>
+
       <section class="section-list">
         <ul>
           <li v-for="(section, key) in sections" :key="key">
             <div class="image-wrapper">
-              <img :src="section.preview">
-              <span>{{key}}</span>
+              <img :src="imageBaseUrl + '/themes/' + theme + '/previews/' + section.preview">
             </div>
+            <span class="name">{{section.title}}</span>
           </li>
         </ul>
       </section>
@@ -94,6 +116,7 @@ export default {
   },
   data() {
     return {
+      imageBaseUrl: this.ctx.servers.theme.options.baseURL,
       theme: 'bonfire',
       sections: [],
       pageSections: [],
