@@ -6,6 +6,7 @@
   bottom: 0;
   right: 0;
   overflow: hidden;
+  background-color: #FAFAFA;
   .head-tools {
     position: relative;
     height: 56px;
@@ -86,12 +87,13 @@
 <template>
 <div class="shopen-site-builder">
   <div class="head-tools">
+    <select v-model="viewPort">
+      <option v-for="(value, key) in screens" :value="value" :key="value">{{key}}</option>
+    </select>
   </div>
   <div class="screen">
     <aside>
-
       <span>组件</span>
-
       <section class="section-list">
         <ul>
           <li v-for="(section, key) in sections" :key="key">
@@ -103,12 +105,15 @@
         </ul>
       </section>
     </aside>
-    <main></main>
+    <main>
+      <div class="screen-viewport" :style="viewPortStyle"></div>
+    </main>
   </div>
 </div>
 </template>
 <script>
 import builder from '../../models/builder'
+import screens from '../../models/screens'
 export default {
   name: 'page-builder',
   created() {
@@ -118,8 +123,19 @@ export default {
     return {
       imageBaseUrl: this.ctx.servers.theme.options.baseURL,
       theme: 'bonfire',
+      viewPort: '360x640',
+      screens,
       sections: [],
       pageSections: [],
+    }
+  },
+  computed: {
+    viewPortStyle() {
+      const xys = this.viewPort.split('x')
+      return {
+        'width': xys[0] + 'px',
+        'height': xys[1] + 'px'
+      }
     }
   },
   methods: {
