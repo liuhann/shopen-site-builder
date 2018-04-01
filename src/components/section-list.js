@@ -10,7 +10,7 @@ export default {
       'class': {
       }
     }, this.sections.map(function(item) {
-      return h(item.component, {
+      return h(item.component || 'div', {
         ref: item._id,
         attrs: {
           id: item._id

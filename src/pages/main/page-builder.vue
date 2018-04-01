@@ -1,4 +1,4 @@
-<style scoped lang="less">
+<style lang="less">
 .shopen-site-builder {
   position: fixed;
   top: 0;
@@ -59,6 +59,7 @@
           justify-content: center;
           align-items: center;
           cursor: pointer;
+
           &:hover {
             background-color: #f7f7f7;
           }
@@ -105,10 +106,6 @@
           height: 40px;
           background: #000;
         }
-        .screen-content {
-          width: 100%;
-          flex: 1;
-        }
       }
     }
   }
@@ -139,8 +136,7 @@
     <main>
       <div class="screen-viewport" :style="viewPortStyle">
         <div class="outer-bar"></div>
-        <draggable element="div" class="screen-content" v-model="pageSections" :options="dragMobileScreenOpts">
-        </draggable>
+        <screen-content ref="viewScreen"></screen-content>
       </div>
     </main>
   </div>
@@ -150,10 +146,12 @@
 import builder from '../../models/builder'
 import screens from '../../models/screens'
 import draggable from 'vuedraggable'
+import ScreenContent from './components/screen-content'
 export default {
   name: 'page-builder',
   components: {
-    draggable
+    draggable,
+    'screen-content': ScreenContent,
   },
   created() {
     this.loadThemeSections(this.theme)
@@ -166,18 +164,11 @@ export default {
       screens,
       dragSourceOpts: {
         sort: false,
+        dragClass: 'pg-src-dragging',
         group: {
           name: 'sections',
           pull: 'clone',
           put: false,
-        }
-      },
-      dragMobileScreenOpts: {
-        sort: true,
-        group: {
-          name: 'sections',
-          put: true,
-          pull: false,
         }
       },
       sections: [],
