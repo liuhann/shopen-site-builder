@@ -11,7 +11,7 @@
  */
 async function getThemeSections({theme}, ctx) {
   const packages = await ctx.servers.theme.get(`/themes/${theme}/package.json`)
-  return packages.sections
+  return packages
 }
 
 async function loadSectionTemplate({theme, section}, ctx) {

@@ -140,6 +140,7 @@
     <main>
       <div class="screen-viewport" :style="viewPortStyle">
         <div class="outer-bar"></div>
+        <link v-for="style in themeStyles" :key="style" :href="imageBaseUrl + '/themes/' + theme + '/styles/' + style" rel="stylesheet">
         <screen-preview ref="viewScreen"></screen-preview>
       </div>
     </main>
@@ -178,6 +179,7 @@ export default {
         }
       },
       sections: [],
+      themeStyles: [],
     }
   },
   computed: {
@@ -191,8 +193,8 @@ export default {
   },
   methods: {
     async loadThemeSections(theme) {
-      const sections = await builder.getThemeSections({theme}, this.ctx)
-      for (let section of sections) {
+      const themePackage = await builder.getThemeSections({theme}, this.ctx)
+      for (let section of themePackage.sections) {
         section.tmpl = await builder.loadSectionTemplate({theme, section}, this.ctx)
         Vue.component('so-' + section.name, {
           props: {
@@ -200,11 +202,14 @@ export default {
               type: Object
             }
           },
-          template: section.tmpl,
+          template: section.tmpl
         })
+        debugger
+        console.log(section.tmpl)
+        this.sections.push(section)
       }
-      this.sections = sections
-    }
+      this.themeStyles = themePackage.styles
+    },
   },
 }
 </script>
