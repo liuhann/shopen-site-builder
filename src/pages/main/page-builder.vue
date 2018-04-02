@@ -110,6 +110,10 @@
     }
   }
 }
+.screen-content {
+  width: 100%;
+  flex: 1;
+}
 </style>
 
 <template>
@@ -123,7 +127,7 @@
     <aside>
       <span>组件</span>
       <section class="section-list">
-        <draggable element="ul" :options="dragSourceOpts">
+        <draggable element="ul" :options="dragSourceOpts" v-model="sections">
           <li v-for="(section, key) in sections" :key="key">
             <div class="image-wrapper">
               <img :src="imageBaseUrl + '/themes/' + theme + '/previews/' + section.preview">
@@ -136,22 +140,24 @@
     <main>
       <div class="screen-viewport" :style="viewPortStyle">
         <div class="outer-bar"></div>
-        <screen-content ref="viewScreen"></screen-content>
+        <screen-preview ref="viewScreen"></screen-preview>
       </div>
     </main>
   </div>
 </div>
 </template>
 <script>
+import Vue from 'vue'
 import builder from '../../models/builder'
 import screens from '../../models/screens'
 import draggable from 'vuedraggable'
-import ScreenContent from './components/screen-content'
+import ScreenPreview from './components/screen-preview'
+
 export default {
   name: 'page-builder',
   components: {
     draggable,
-    'screen-content': ScreenContent,
+    'screen-preview': ScreenPreview,
   },
   created() {
     this.loadThemeSections(this.theme)
@@ -172,7 +178,6 @@ export default {
         }
       },
       sections: [],
-      pageSections: [],
     }
   },
   computed: {
@@ -187,6 +192,17 @@ export default {
   methods: {
     async loadThemeSections(theme) {
       const sections = await builder.getThemeSections({theme}, this.ctx)
+      for (let section of sections) {
+        section.tmpl = await builder.loadSectionTemplate({theme, section}, this.ctx)
+        Vue.component('so-' + section.name, {
+          props: {
+            data: {
+              type: Object
+            }
+          },
+          template: section.tmpl,
+        })
+      }
       this.sections = sections
     }
   },

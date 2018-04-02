@@ -39,10 +39,7 @@
 import Vue from 'vue'
 import PageSections from './components/sections-shortview'
 import SectionTemplates from './section-templates'
-import SectionList from '../../components/section-list.js'
 import SectionSetting from './section-setting'
-
-Vue.component('section-list', SectionList);
 
 export default {
   data() {

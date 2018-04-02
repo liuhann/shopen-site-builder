@@ -15,7 +15,7 @@ async function getThemeSections({theme}, ctx) {
 }
 
 async function loadSectionTemplate({theme, section}, ctx) {
-  return ctx.servers.theme.get(`/theme/${theme}/sections/${section}.html`)
+  return ctx.servers.theme.get(`/themes/${theme}/components/${section.name}.html`)
 }
 
 export default {

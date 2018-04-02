@@ -1,19 +1,38 @@
+
 export default {
-  name: 'section-list',
+  name: 'section',
   props: {
-    sections: {
-      type: Array
+    name: {
+      type: String
+    },
+    data: {
+      type: Object
     }
   },
   render(h) {
-    return h('div', {
-      'class': {
+    const dragMobileScreenOpts = {
+      sort: true,
+      group: {
+        name: 'sections',
+        put: true,
+        pull: false,
       }
-    }, this.sections.map(function(item) {
+    }
+    return h('draggable', {
+      'class': {
+        'section-list': true
+      },
+      'props': {
+        options: dragMobileScreenOpts
+      }
+    }, this.value.map(function(item) {
       return h(item.component || 'div', {
         ref: item._id,
         attrs: {
-          id: item._id
+          id: item._id,
+          class: {
+            'section-component': true
+          }
         },
         props: {
           setting: item.data
