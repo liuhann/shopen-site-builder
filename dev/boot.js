@@ -10,6 +10,9 @@ async function boot() {
       },
       theme: {
         baseURL: 'http://localhost:3000'
+      },
+      page: {
+        baseURL: 'http://localhost:3000'
       }
     },
     started: function(vm) {

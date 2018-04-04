@@ -1,12 +1,11 @@
 <style scoped>
   .screen-content {
-    width: 100%;
-    flex: 1;
+    overflow-y: auto;
   }
 </style>
 
 <template>
-<draggable element="div" class="screen-content" v-model="sections" :options="dragMobileScreenOpts">
+<draggable element="div" class="screen-content" v-model="sections" :options="dragMobileScreenOpts" :style="screenViewPort">
   <view-section v-for="(section, index) in sections" :name="section.name" :data="section.data" :key="index"></view-section>
 </draggable>
 </template>
@@ -23,6 +22,9 @@ export default {
   props: {
     loadedSections: {
       type: Array
+    },
+    screenViewPort: {
+      type: Object
     }
   },
   data() {

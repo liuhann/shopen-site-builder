@@ -19,14 +19,14 @@
   }
   .screen {
     position: absolute;
-    top: 56px;
+    top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    aside {
+    aside.left {
       position: absolute;
       left: 0;
       top:0;
@@ -85,7 +85,7 @@
       position: absolute;
       left: 250px;
       top:0;
-      right: 0px;
+      right: 250px;
       overflow: auto;
       bottom: 0;
       color: #5b6b73;
@@ -97,16 +97,19 @@
         background: #fff;
         margin: 20px 40px;
         border: 1px solid #eee;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        .outer-bar {
-          width: 100%;
-          height: 40px;
-          background: #000;
-        }
+        position: relative;
       }
+    }
+    aside.right {
+      position: absolute;
+      right: 0;
+      top:0;
+      bottom: 0;
+      color: #5b6b73;
+      background: #fff;
+      font-size: 12px;
+      width: 248px;
+      box-shadow: 0 2px 30px 0 hsla(0,0%,84%,.5);
     }
   }
 }
@@ -118,13 +121,19 @@
 
 <template>
 <div class="shopen-site-builder">
-  <div class="head-tools">
+  <!--<div class="head-tools">
     <select v-model="viewPort">
-      <option v-for="(value, key) in screens" :value="value" :key="value">{{key}}</option>
+      <option v-for="(value, key) in screens" :value="key" :key="key">{{key}}</option>
     </select>
-  </div>
+    {{ screens[viewPort].desc }}
+  </div>-->
   <div class="screen">
-    <aside>
+    <aside class="left">
+      <select v-model="viewPort">
+        <option v-for="(value, key) in screens" :value="key" :key="key">{{key}}</option>
+      </select>
+      <div>{{ screens[viewPort].desc }}</div>
+      <button @click="savePage">保存</button>
       <span>组件</span>
       <section class="section-list">
         <draggable element="ul" :options="dragSourceOpts" v-model="sections">
@@ -139,11 +148,14 @@
     </aside>
     <main>
       <div class="screen-viewport" :style="viewPortStyle">
-        <div class="outer-bar"></div>
+        <div class="outer-bar" :style="shellHeadStyle"></div>
         <link v-for="style in themeStyles" :key="style" :href="imageBaseUrl + '/themes/' + theme + '/styles/' + style" rel="stylesheet">
-        <screen-preview ref="viewScreen"></screen-preview>
+        <screen-preview :screen-view-port="previewViewPort" ref="viewScreen"></screen-preview>
       </div>
     </main>
+    <aside class="right">
+
+    </aside>
   </div>
 </div>
 </template>
@@ -167,7 +179,7 @@ export default {
     return {
       imageBaseUrl: this.ctx.servers.theme.options.baseURL,
       theme: 'bonfire',
-      viewPort: '360x640',
+      viewPort: 'iPhone 8 Plus',
       screens,
       dragSourceOpts: {
         sort: false,
@@ -184,10 +196,25 @@ export default {
   },
   computed: {
     viewPortStyle() {
-      const xys = this.viewPort.split('x')
+      const {x, y} = screens[this.viewPort].in
       return {
-        'width': xys[0] + 'px',
-        'height': xys[1] + 'px'
+        'width': x + 'px',
+        'height': y + 'px'
+      }
+    },
+    shellHeadStyle() {
+      const {x} = screens[this.viewPort].in
+      return {
+        width: x + 'px',
+        height: x / 5 + 'px',
+        background: '#222'
+      }
+    },
+    previewViewPort() {
+      const {x, y} = screens[this.viewPort].in
+      return {
+        width: x + 'px',
+        height: (y - x / 5) + 'px',
       }
     }
   },
@@ -204,11 +231,16 @@ export default {
           },
           template: section.tmpl
         })
-        debugger
-        console.log(section.tmpl)
         this.sections.push(section)
       }
       this.themeStyles = themePackage.styles
+    },
+    async savePage() {
+      await builder.savePage({
+        page: 'test',
+        type: 'index',
+        data: this.$refs.viewScreen.sections,
+      }, this.ctx)
     },
   },
 }

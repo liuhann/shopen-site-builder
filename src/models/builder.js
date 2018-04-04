@@ -18,7 +18,12 @@ async function loadSectionTemplate({theme, section}, ctx) {
   return ctx.servers.theme.get(`/themes/${theme}/components/${section.name}.html`)
 }
 
+async function savePage({page, type, data, options}, ctx) {
+  return ctx.servers.page.post(`/api/page/save`, {page, type, data, options})
+}
+
 export default {
   getThemeSections,
   loadSectionTemplate,
+  savePage
 }
