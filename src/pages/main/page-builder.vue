@@ -239,7 +239,7 @@ export default {
       await builder.savePage({
         page: 'test',
         type: 'index',
-        data: this.$refs.viewScreen.sections,
+        sections: this.$refs.viewScreen.sections,
       }, this.ctx)
     },
   },

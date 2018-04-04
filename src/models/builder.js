@@ -18,8 +18,11 @@ async function loadSectionTemplate({theme, section}, ctx) {
   return ctx.servers.theme.get(`/themes/${theme}/components/${section.name}.html`)
 }
 
-async function savePage({page, type, data, options}, ctx) {
-  return ctx.servers.page.post(`/api/page/save`, {page, type, data, options})
+async function savePage({page, type, sections, options}, ctx) {
+  for (let section of sections) {
+    delete section.template
+  }
+  return ctx.servers.page.post(`/api/page/save`, {page, type, sections, options})
 }
 
 export default {
